@@ -1,6 +1,6 @@
 # Yield!
 
-This template should help get you started developing with Vue 3 in Vite.
+prioectul de atestat pentru informatica
 
 ## Recommended IDE Setup
 
