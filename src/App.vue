@@ -1,35 +1,25 @@
 <script setup>
-import intersection from './components/roadIntersection.vue'
+import gameLoop from './components/gameLoop.vue'
+import startMenu from './components/startMenu.vue'
+import chooseCar from './components/chooseCar.vue'
 import { ref } from 'vue'
 
-const IntersectionType = ref('+')
-const forceUpdate = ref(0)
-const updateType = (event) => {
-  IntersectionType.value = event.target.value
-  forceUpdate.value = (forceUpdate.value + 1) % 2
+const gameState = ref('startMenu')
+const chosenCar = ref('1')
+const handleCarSelection = (e) => {
+  chosenCar.value = e
+  gameState.value = 'gameLoop'
 }
 </script>
 
 <template>
-  <select name="type" id="select" @input="updateType($event)">
-    <option value="+">+</option>
-    <option value="T">T</option>
-  </select>
-  <intersection
-    class="intersection"
-    :type="IntersectionType"
-    priority-road="RB"
-    :key="forceUpdate"
-    cars="RLTB"
-  ></intersection>
+  <startMenu v-if="gameState === 'startMenu'" @gameStart="gameState = 'chooseCar'"></startMenu>
+  <chooseCar v-else-if="gameState === 'chooseCar'" @carSelection="handleCarSelection"></chooseCar>
+  <gameLoop v-else-if="gameState === 'gameLoop'" :playerCar="chosenCar"></gameLoop>
 </template>
 
 <style lang="scss" scoped>
-.intersection {
-  width: 800px;
-  height: 700px;
-  overflow: hidden;
-}
-@media (min-width: 1024px) {
+* {
+  user-select: none;
 }
 </style>
