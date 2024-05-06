@@ -53,12 +53,16 @@ const generateIntersection = () => {
       if (getRandInt(3) == 0) stops += pos
     })
 
+  //direction
+  const direction = structure.split('').filter((e) => e != 'B')[getRandInt(structure.length - 2)]
+  console.log(direction)
   return {
     type: _type,
     structure: structure,
     priorityRoad: priorityRd,
     cars: cars,
-    stopSigns: stops
+    stopSigns: stops,
+    direction: direction
   }
 }
 const intersectionData = ref(generateIntersection())
@@ -67,7 +71,6 @@ const refreshVal = ref(0)
 const refresh = () => {
   intersectionData.value = generateIntersection()
   refreshVal.value = (refreshVal.value + 1) % 2
-  console.clear()
 }
 </script>
 
@@ -82,6 +85,7 @@ const refresh = () => {
       :key="refreshVal"
       :cars="intersectionData.cars"
       :player-car="props.playerCar"
+      :direction="intersectionData.direction"
     ></intersection>
     <button type="button" @click="refresh()">generate</button>
   </div>

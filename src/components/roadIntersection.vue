@@ -43,6 +43,12 @@ const props = defineProps({
     validator(value) {
       return '1234'.includes(value)
     }
+  },
+  direction: {
+    type: String,
+    validator(value, props) {
+      return props.structure.includes(value) && value != 'B'
+    }
   }
 })
 
@@ -95,6 +101,19 @@ const missingRoad = computed(() => {
   return 'ERR'
 })
 
+const arrowColorFilter = computed(() => {
+  switch (props.playerCar) {
+    case '1':
+      return 'hue-rotate(180deg)'
+    case '2':
+      return 'hue-rotate(0) opacity(0.8)'
+    case '3':
+      return 'saturate(0) brightness(3)'
+    case '4':
+      return 'hue-rotate(193deg) brightness(1.5) opacity(0.7)'
+  }
+})
+
 const positionToDegrees = {
   R: 0,
   B: 90,
@@ -107,6 +126,12 @@ const positionToDegrees = {
   <div class="wrapper" draggable="false">
     <div class="intersection">
       <div v-if="props.type === 'T'" :class="`TIntersectionLine ${missingRoad}RoadLine`"></div>
+      <img
+        :src="`/road_textures/turn${props.direction}.png`"
+        :id="`directionArrow${props.direction}`"
+        alt=""
+        class="directionArrow"
+      />
       <div
         v-for="road in roads"
         :key="road.position"
@@ -178,6 +203,29 @@ const positionToDegrees = {
     padding: 0;
     margin: 0;
     width: 100%;
+  }
+}
+
+.directionArrow {
+  position: absolute;
+  filter: v-bind(arrowColorFilter);
+  transform-origin: center bottom;
+  transform: translateZ(1px);
+  transform-style: preserve-3d;
+  &#directionArrowT {
+    bottom: 30%;
+    left: 50%;
+    height: 40%;
+  }
+  &#directionArrowR {
+    left: 52.5%;
+    bottom: 32%;
+    height: 18%;
+  }
+  &#directionArrowL {
+    bottom: 30%;
+    left: 31.5%;
+    height: 30%;
   }
 }
 
@@ -263,7 +311,7 @@ const positionToDegrees = {
   &#carB {
     rotate: 270deg;
     width: 23%;
-    left: 50%;
+    left: 60%;
     top: -10%;
   }
 }
