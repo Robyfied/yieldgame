@@ -112,6 +112,7 @@ const arrowColorFilter = computed(() => {
     case '4':
       return 'hue-rotate(193deg) brightness(1.5) opacity(0.7)'
   }
+  return 'hue-rotate(0)'
 })
 
 const positionToDegrees = {

@@ -72,10 +72,7 @@ const stopRotation = (carNo) => {
 </template>
 
 <style lang="scss" scoped>
-@font-face {
-  font-family: 'SilkScreen';
-  src: url(/fonts/slkscr.woff2);
-}
+@import url('../assets/base.scss');
 
 img {
   image-rendering: pixelated;
@@ -85,7 +82,7 @@ img {
   position: relative;
   text-align: center;
   font-size: 3rem;
-  font-family: Silkscreen, Verdana, Geneva, Tahoma, sans-serif;
+  font-family: SilkScreen, Verdana, Geneva, Tahoma, sans-serif;
   margin-bottom: 4rem;
   user-select: none;
 
