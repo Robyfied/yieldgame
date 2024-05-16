@@ -52,6 +52,16 @@ const props = defineProps({
   }
 })
 
+const getRandInt = (max) => Math.floor(Math.random() * (max + 1))
+
+let npcCars = ['1', '2', '3', '4'].filter((e) => e != props.playerCar)
+const getCarTexture = (roadPosition) => {
+  if (roadPosition == 'B') return `/car_textures/${props.playerCar}/car${props.playerCar}B.png`
+  const carNo = npcCars[getRandInt(npcCars.length - 1)]
+  npcCars = npcCars.filter((e) => e != carNo)
+  return '/car_textures/' + carNo + '/car' + carNo + roadPosition + '.png'
+}
+
 const roads = ref(
   [...Array(props.structure.length)].map((_, ix) => {
     return {
@@ -59,10 +69,17 @@ const roads = ref(
       hasPriority: props.priorityRoad.includes(props.structure[ix]),
       hasStop: props.stopSigns != null ? props.stopSigns.includes(props.structure[ix]) : false,
       hasCar: props.cars.includes(props.structure[ix]),
+      carTex: getCarTexture(props.structure[ix]),
       selected: false
     }
   })
 )
+
+const selectCar = (road) => {
+  roads.value.filter((e) => e.position == road.position)[0].selected = !roads.value.filter(
+    (e) => e.position == road.position
+  )[0].selected
+}
 
 const getAdditionalPannel = (intersectionType, priorityRoad, intersectionStructure) => {
   if (priorityRoad[0] != 'L' && priorityRoad[0] != 'R')
@@ -84,16 +101,6 @@ const getSignTexture = (road) => {
   if (road.hasPriority) return '/sign_textures/priority.png'
   if (road.hasStop) return '/sign_textures/stop.png'
   return '/sign_textures/yield.png'
-}
-
-const getRandInt = (max) => Math.floor(Math.random() * (max + 1))
-
-let npcCars = ['1', '2', '3', '4'].filter((e) => e != props.playerCar)
-const getCarTexture = (road) => {
-  if (road.position == 'B') return `/car_textures/${props.playerCar}/car${props.playerCar}B.png`
-  const carNo = npcCars[getRandInt(npcCars.length - 1)]
-  npcCars = npcCars.filter((e) => e != carNo)
-  return '/car_textures/' + carNo + '/car' + carNo + road.position + '.png'
 }
 
 const missingRoad = computed(() => {
@@ -164,8 +171,10 @@ const positionToDegrees = {
         <img
           v-if="road.hasCar"
           class="car"
+          :class="{ selected: road.selected }"
           :id="`car${road.position}`"
-          :src="getCarTexture(road, Math.floor(Math.random() * 4) + 1)"
+          :src="road.carTex"
+          @click="selectCar(road)"
           alt="carTex"
         />
       </div>
@@ -290,7 +299,7 @@ const positionToDegrees = {
   transform: rotateX(-55deg);
   transform-style: preserve-3d;
   z-index: 5;
-  filter: drop-shadow(0px 5px 2px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(0px 5px 2px rgba(0, 0, 0, 0.4)) drop-shadow(rgba(255, 255, 255, 1));
 
   &#carR {
     width: 50%;
@@ -316,6 +325,12 @@ const positionToDegrees = {
     top: -10%;
   }
 }
+
+.selected {
+  filter: drop-shadow(4px 0 0 white) drop-shadow(-4px 0 0 white) drop-shadow(0 4px 0 white)
+    drop-shadow(0 -4px 0 white) brightness(1.2);
+}
+
 .TIntersectionLine {
   position: absolute;
   transform: translateY(-50%);

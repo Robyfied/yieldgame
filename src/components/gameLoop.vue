@@ -55,7 +55,6 @@ const generateIntersection = () => {
 
   //direction
   const direction = structure.split('').filter((e) => e != 'B')[getRandInt(structure.length - 2)]
-  console.log(direction)
   return {
     type: _type,
     structure: structure,

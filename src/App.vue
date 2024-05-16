@@ -4,7 +4,7 @@ import startMenu from './components/startMenu.vue'
 import chooseCar from './components/chooseCar.vue'
 import { ref } from 'vue'
 
-const gameState = ref('startMenu')
+const gameState = ref('gameLoop')
 const chosenCar = ref('1')
 const handleCarSelection = (e) => {
   chosenCar.value = e
