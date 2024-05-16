@@ -32,6 +32,13 @@ const props = defineProps({
       return value.split('').every((char) => props.structure.includes(char))
     }
   },
+  selected: {
+    type: String,
+    default: '',
+    validator(value, props) {
+      return value.split('').every((char) => props.cars.includes(char))
+    }
+  },
   stopSigns: {
     type: String,
     validator(value, props) {
@@ -52,33 +59,50 @@ const props = defineProps({
   }
 })
 
+const emit = defineEmits(['carSelect'])
+
 const getRandInt = (max) => Math.floor(Math.random() * (max + 1))
 
-let npcCars = ['1', '2', '3', '4'].filter((e) => e != props.playerCar)
-const getCarTexture = (roadPosition) => {
-  if (roadPosition == 'B') return `/car_textures/${props.playerCar}/car${props.playerCar}B.png`
-  const carNo = npcCars[getRandInt(npcCars.length - 1)]
-  npcCars = npcCars.filter((e) => e != carNo)
-  return '/car_textures/' + carNo + '/car' + carNo + roadPosition + '.png'
+const getCarTextures = () => {
+  let npcCars = ['1', '2', '3', '4'].filter((e) => e != props.playerCar)
+  let returnVal = {}
+  for (let i = 0; i < props.cars.length; i++) {
+    const roadPosition = props.cars[i]
+    if (roadPosition == 'B')
+      returnVal['B'] = `/car_textures/${props.playerCar}/car${props.playerCar}B.png`
+    else {
+      const carNo = npcCars[getRandInt(npcCars.length - 1)]
+      npcCars = npcCars.filter((e) => e != carNo)
+      returnVal[props.cars[i]] = `/car_textures/${carNo}/car${carNo}${roadPosition}.png`
+    }
+  }
+  return returnVal
 }
 
-const roads = ref(
-  [...Array(props.structure.length)].map((_, ix) => {
+const roads = computed(() => {
+  const carTextures = ref(getCarTextures())
+  return [...Array(props.structure.length)].map((_, ix) => {
     return {
       position: props.structure[ix],
       hasPriority: props.priorityRoad.includes(props.structure[ix]),
       hasStop: props.stopSigns != null ? props.stopSigns.includes(props.structure[ix]) : false,
       hasCar: props.cars.includes(props.structure[ix]),
-      carTex: getCarTexture(props.structure[ix]),
+      carTex: carTextures.value[props.structure[ix]],
       selected: false
     }
   })
-)
+})
 
+const selectedCars = ref(props.selected.split(''))
 const selectCar = (road) => {
-  roads.value.filter((e) => e.position == road.position)[0].selected = !roads.value.filter(
-    (e) => e.position == road.position
-  )[0].selected
+  if (road.position !== 'B') {
+    roads.value.filter((e) => e.position == road.position)[0].selected = !roads.value.filter(
+      (e) => e.position == road.position
+    )[0].selected
+    selectedCars.value = roads.value.filter((e) => e.selected == true).map((e) => e.position)
+
+    emit('carSelect', selectedCars)
+  }
 }
 
 const getAdditionalPannel = (intersectionType, priorityRoad, intersectionStructure) => {
@@ -131,7 +155,7 @@ const positionToDegrees = {
 </script>
 
 <template>
-  <div class="wrapper" draggable="false">
+  <div class="wrapper">
     <div class="intersection">
       <div v-if="props.type === 'T'" :class="`TIntersectionLine ${missingRoad}RoadLine`"></div>
       <img
@@ -139,20 +163,28 @@ const positionToDegrees = {
         :id="`directionArrow${props.direction}`"
         alt=""
         class="directionArrow"
+        draggable="false"
       />
       <div
         v-for="road in roads"
         :key="road.position"
         class="road"
         :style="{ transform: `rotate(${positionToDegrees[road.position]}deg)` }"
+        draggable="false"
       >
         <img class="roadTex" :src="getRoadTexture(road)" alt="roadTex" draggable="false" />
         <div class="signWrapper">
-          <img class="sign" :id="`sign${road.position}`" :src="getSignTexture(road)" />
+          <img
+            class="sign"
+            :id="`sign${road.position}`"
+            :src="getSignTexture(road)"
+            draggable="false"
+          />
           <img
             class="sign signBack"
             :id="`sign${road.position}`"
             :src="getSignTexture(road).replace('.png', '_back.png ')"
+            draggable="false"
           />
           <img
             v-if="!['RL', 'LR', 'TB', 'BT'].includes(props.priorityRoad)"
@@ -160,22 +192,25 @@ const positionToDegrees = {
             :id="`additional${road.position}`"
             :src="getAdditionalPannel(props.type, props.priorityRoad, props.structure)"
             alt="additionalPanel"
+            draggable="false"
           />
           <img
             v-if="!['RL', 'LR', 'TB', 'BT'].includes(props.priorityRoad)"
             class="additionalPanel additionalBack"
             src="/sign_textures/additional_back.png"
             alt="backside"
+            draggable="false"
           />
         </div>
         <img
           v-if="road.hasCar"
           class="car"
-          :class="{ selected: road.selected }"
+          :class="{ selected: selectedCars.includes(road.position) }"
           :id="`car${road.position}`"
           :src="road.carTex"
           @click="selectCar(road)"
           alt="carTex"
+          draggable="false"
         />
       </div>
     </div>
@@ -269,7 +304,7 @@ const positionToDegrees = {
   }
 
   .signBack {
-    transform: translateZ(-0.1px);
+    transform: translateZ(-0.3px);
   }
 
   .additionalPanel {
@@ -327,8 +362,9 @@ const positionToDegrees = {
 }
 
 .selected {
-  filter: drop-shadow(4px 0 0 white) drop-shadow(-4px 0 0 white) drop-shadow(0 4px 0 white)
-    drop-shadow(0 -4px 0 white) brightness(1.2);
+  filter: sepia(100%) hue-rotate(-40deg) saturate(150%) drop-shadow(4px 0 0 rgb(255, 0, 0))
+    drop-shadow(-4px 0 0 rgb(255, 0, 0)) drop-shadow(0 4px 0 rgb(255, 0, 0))
+    drop-shadow(0 -4px 0 rgb(255, 0, 0));
 }
 
 .TIntersectionLine {
