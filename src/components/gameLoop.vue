@@ -32,6 +32,12 @@ const generateIntersection = () => {
   do {
     r1 = structure[getRandInt(structure.length - 1)]
     r2 = structure[getRandInt(structure.length - 1)]
+    // 50% chance to reroll if player is on priority road
+    if (r1 === 'B' && getRandInt(1) === 0) {
+      r1 = structure[getRandInt(structure.length - 1)]
+    } else if (r2 === 'B' && getRandInt(1) === 0) {
+      r2 = structure[getRandInt(structure.length - 1)]
+    }
   } while (r1 === r2)
   const priorityRd = r1 + r2
 
@@ -71,20 +77,41 @@ const intersectionData = ref(generateIntersection())
 const calculatePriorityCars = () => {
   const interData = intersectionData.value
   let cars = []
-  //if on priority road
+  //if on priority road ↓
   if (interData.priorityRoad.includes('B')) {
-    //if stay on priority road or turn right
-    if (
-      interData.priorityRoad.includes('R') ||
-      interData.priorityRoad.split('').includes(intersectionData.value.direction)
-    )
-      return []
-    //if other car is on priority road
-    else if (interData.cars.includes(interData.priorityRoad.split('').filter((e) => e != 'B'))[0]) {
+    //if stay on priority road or turn right ↓
+    if (interData.priorityRoad.split('').includes(intersectionData.value.direction)) return []
+    //if leaving priority road and other car intersects ↓
+    else if (interData.priorityRoad.includes('R') && interData.cars.includes('R'))
       cars.push(interData.priorityRoad.split('').filter((e) => e != 'B')[0])
-      console.log('OTHER CAR ON PRIORITY ROAD')
-    }
+    else if (
+      interData.priorityRoad.includes('T') &&
+      interData.cars.includes('T') &&
+      interData.direction == 'L'
+    )
+      cars.push('T')
+    else return []
   }
+  // if not on priority road↓
+  else {
+    interData.priorityRoad.split('').forEach((e) => {
+      if (interData.cars.includes(e)) cars.push(e)
+    })
+
+    if (
+      interData.direction === 'L' &&
+      !interData.priorityRoad.includes('T') &&
+      interData.cars.includes('T')
+    )
+      cars.push('T')
+    if (
+      !interData.priorityRoad.includes('R') &&
+      interData.cars.includes('R') &&
+      !cars.includes('R')
+    )
+      cars.push('R')
+  }
+  if (interData.direction === 'R') cars = cars.filter((e) => e != 'R') // really debatable honestly
   return cars
 }
 
@@ -94,11 +121,16 @@ const updateSelectedCars = (selectCarEmit) => {
 }
 
 let _PREV
+const score = ref(0)
 const refreshVal = ref(0)
 const submit = () => {
-  if (calculatePriorityCars().sort().join(',') === selectedCars.value.sort().join(','))
-    console.log('ok')
-  // else console.log('not ok')
+  if (calculatePriorityCars().sort().join(',') === selectedCars.value.sort().join(',')) {
+    console.log('corect')
+    score.value++
+  } else {
+    console.log('incorect')
+    score.value = 0
+  }
 
   //generate new intersection
   selectedCars.value = []
@@ -115,6 +147,7 @@ const previous = () => {
 
 <template>
   <div class="wrapper">
+    <h2>score: {{ score }}</h2>
     <intersection
       class="intersectionDisplay"
       :type="intersectionData.type"

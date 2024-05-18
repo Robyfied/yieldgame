@@ -29,7 +29,7 @@ const stopRotation = (carNo) => {
 
 <template>
   <div class="wrapper">
-    <h1 class="title">Choose your car</h1>
+    <h1 class="title">Alege-ti masina!</h1>
     <ul class="carsList">
       <li
         class="carContainer"
