@@ -192,8 +192,8 @@ const toggleInfo = () => {
       </p>
       <br />
       <p>
-        <span style="font-size: 2rem">!</span> Trebuie sa selectati
-        <span>doar masinile cu care va puteti intersecta</span>.
+        <span style="font-size: 2rem">!</span> Puteti ceda trecerea
+        <span>doar masinilor cu care va puteti intersecta</span>.
       </p>
       <br /><br />
       <button type="button" @click="toggleInfo()">Start</button>
@@ -221,7 +221,7 @@ const toggleInfo = () => {
             >{{ result }}</span
           >
           <div v-if="result === 'incorect'">
-            <p>Rezultatul corect era: {{ correctResult }}</p>
+            <p>Raspunsul corect era: {{ correctResult }}</p>
             <button type="button" @click="previous()" id="retryBtn">incearca din nou</button>
           </div>
         </div>
