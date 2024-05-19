@@ -5,7 +5,8 @@ import chooseCar from './components/chooseCar.vue'
 import { ref } from 'vue'
 
 const gameState = ref('startMenu')
-const chosenCar = ref('1')
+
+const chosenCar = ref('')
 const handleCarSelection = (e) => {
   chosenCar.value = e
   gameState.value = 'gameLoop'
@@ -13,25 +14,35 @@ const handleCarSelection = (e) => {
 </script>
 
 <template>
-  <Transition>
-    <startMenu v-if="gameState === 'startMenu'" @gameStart="gameState = 'chooseCar'"></startMenu>
-    <chooseCar v-else-if="gameState === 'chooseCar'" @carSelection="handleCarSelection"></chooseCar>
-    <gameLoop v-else-if="gameState === 'gameLoop'" :playerCar="chosenCar"></gameLoop>
-  </Transition>
+  <startMenu
+    v-if="gameState === 'startMenu'"
+    class="fadeInAnimation"
+    @gameStart="gameState = 'chooseCar'"
+  ></startMenu>
+  <chooseCar
+    v-else-if="gameState === 'chooseCar'"
+    class="fadeInAnimation"
+    @carSelection="handleCarSelection"
+  ></chooseCar>
+  <gameLoop
+    v-else-if="gameState === 'gameLoop'"
+    class="fadeInAnimation"
+    :playerCar="chosenCar"
+    @returnToStart="gameState = 'startMenu'"
+  ></gameLoop>
 </template>
 
 <style lang="scss" scoped>
-* {
-  user-select: none;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s ease-out;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
+.fadeInAnimation {
+  animation: fadeIn 0.8s;
 }
 </style>

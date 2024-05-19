@@ -92,7 +92,6 @@ img {
     height: 0.5rem;
     width: 3rem;
     background-color: rgb(254, 55, 55);
-    border-radius: 1rem;
     bottom: -1rem;
     left: 50%;
     transform: translateX(-50%);
@@ -104,7 +103,7 @@ img {
   justify-content: center;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 2rem;
 }
 .carContainer {
   display: flex;
@@ -113,8 +112,7 @@ img {
   height: 9rem;
   width: 15rem;
   background: #fff9f6;
-  border-radius: 1rem;
-  border: 3px solid #ffc8b1;
+  border: 0.4rem solid #ffc8b1;
   transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 
   &:hover {

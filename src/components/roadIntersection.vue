@@ -205,7 +205,10 @@ const positionToDegrees = {
         <img
           v-if="road.hasCar"
           class="car"
-          :class="{ selected: selectedCars.includes(road.position) }"
+          :class="{
+            selected: selectedCars.includes(road.position),
+            pointerCursor: road.position != 'B'
+          }"
           :id="`car${road.position}`"
           :src="road.carTex"
           @click="selectCar(road)"
@@ -220,6 +223,7 @@ const positionToDegrees = {
 <style lang="scss" scoped>
 .wrapper {
   perspective: 600px;
+  box-sizing: content-box;
 }
 
 .intersection {
@@ -258,19 +262,19 @@ const positionToDegrees = {
   transform: translateZ(1px);
   transform-style: preserve-3d;
   &#directionArrowT {
-    bottom: 30%;
-    left: 50%;
-    height: 40%;
+    bottom: 25%;
+    left: 51%;
+    height: 50%;
   }
   &#directionArrowR {
-    left: 52.5%;
-    bottom: 32%;
-    height: 18%;
+    left: 53%;
+    bottom: 25%;
+    height: 25%;
   }
   &#directionArrowL {
-    bottom: 30%;
-    left: 31.5%;
-    height: 30%;
+    bottom: 24%;
+    left: 32.5%;
+    height: 40%;
   }
 }
 
@@ -294,7 +298,7 @@ const positionToDegrees = {
     background-color: green;
     position: absolute;
     bottom: 0;
-    transform: rotateX(90deg) translateZ(-48px);
+    transform: rotateX(90deg) translateZ(-3.2em);
     transform-style: preserve-3d;
   }
 
@@ -328,6 +332,10 @@ const positionToDegrees = {
   }
 }
 
+.pointerCursor {
+  cursor: pointer;
+}
+
 .car {
   position: absolute;
   transform-origin: center bottom;
@@ -356,7 +364,7 @@ const positionToDegrees = {
   &#carB {
     rotate: 270deg;
     width: 23%;
-    left: 60%;
+    left: 52%;
     top: -10%;
   }
 }
@@ -384,7 +392,7 @@ const positionToDegrees = {
   }
   &.TRoadLine {
     rotate: 90deg;
-    top: -11.2%;
+    top: -15%;
   }
 }
 </style>
