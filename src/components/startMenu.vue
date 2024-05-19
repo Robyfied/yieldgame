@@ -95,7 +95,7 @@ import intersection from './roadIntersection.vue'
   overflow: hidden;
   perspective: 150rem;
 
-  &::v-deep {
+  &:deep {
     .intersection {
       animation: intersectionSpin 30s linear infinite;
     }

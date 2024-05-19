@@ -30,6 +30,9 @@ const handleCarSelection = (e) => {
     :playerCar="chosenCar"
     @returnToStart="gameState = 'startMenu'"
   ></gameLoop>
+  <div class="version">
+    <span>Version ALPHA 1.0</span>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -44,5 +47,11 @@ const handleCarSelection = (e) => {
 
 .fadeInAnimation {
   animation: fadeIn 0.8s;
+}
+
+.version {
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 </style>
