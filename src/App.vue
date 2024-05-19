@@ -50,7 +50,7 @@ const handleCarSelection = (e) => {
 }
 
 .version {
-  position: absolute;
+  position: fixed;
   right: 0;
   bottom: 0;
 }

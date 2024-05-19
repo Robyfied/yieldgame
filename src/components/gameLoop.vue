@@ -112,10 +112,11 @@ const calculatePriorityCars = () => {
     )
       cars.push('R')
   }
-  if (interData.direction === 'R') cars = cars.filter((e) => e != 'R') // really debatable honestly
+  if (interData.direction === 'R') cars = cars.filter((e) => e != 'R')
   if (
     interData.type === 'T' &&
-    ['TL', 'LT'].includes(interData.priorityRoad) &&
+    interData.direction === 'T' &&
+    !interData.priorityRoad.includes('B') &&
     interData.cars.includes('T')
   )
     cars = cars.filter((e) => e != 'T')
