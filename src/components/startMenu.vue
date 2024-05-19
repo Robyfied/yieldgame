@@ -95,14 +95,12 @@ import intersection from './roadIntersection.vue'
   overflow: hidden;
   perspective: 150rem;
 
-  &:deep {
-    .intersection {
-      animation: intersectionSpin 30s linear infinite;
-    }
+  &:deep(.intersection) {
+    animation: intersectionSpin 30s linear infinite;
+  }
 
-    .signWrapper::before {
-      bottom: -18%;
-    }
+  &:deep(.signWrapper::before) {
+    bottom: -18%;
   }
 }
 
