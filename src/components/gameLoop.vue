@@ -141,7 +141,7 @@ const getCorrectResult = () => {
   calculatePriorityCars().forEach((e) => {
     printVal += `masina din ${carPositionToName[e]} si `
   })
-  return printVal.substring(0, printVal.length - 3)
+  return printVal === '' ? 'nicio masina' : printVal.substring(0, printVal.length - 3)
 }
 
 let _PREV
